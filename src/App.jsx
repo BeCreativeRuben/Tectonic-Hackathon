@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import kbcLogoImg from "./assets/bank-kbc.png";
+import { WeekView, evaDeskRequest, useWeekScore } from "./week/WeekView.jsx";
+import { TALK_TRACK } from "./week/guidance.js";
 
 const INITIAL_BALANCE = "€55.30";
 
@@ -90,6 +92,28 @@ function KBCLogo({ className = "h-9 w-auto", showText = false }) {
         </span>
       )}
     </div>
+  );
+}
+
+function Portrait({ person, className = "h-12 w-12 rounded-2xl" }) {
+  if (person.customerAvatar) {
+    return (
+      <img
+        src={person.customerAvatar}
+        alt={person.customerName}
+        className={`${className} object-cover border border-slate-200`}
+      />
+    );
+  }
+  const letters = person.customerName
+    .split(" ")
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("");
+  return (
+    <span className={`${className} inline-flex items-center justify-center bg-sky-100 text-sm font-bold text-kbc-blue`}>
+      {letters}
+    </span>
   );
 }
 
@@ -188,6 +212,16 @@ function GlobalRoleBar({ activeRole, onChangeRole, incomingCallCount }) {
             }`}
           >
             <span>📱</span> Customer App View
+          </button>
+          <button
+            onClick={() => onChangeRole("week")}
+            className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+              activeRole === "week"
+                ? "bg-kbc-blue text-white shadow-xs"
+                : "text-slate-600 hover:text-kbc-navy"
+            }`}
+          >
+            <span>📅</span> Eva’s week
           </button>
           <button
             onClick={() => onChangeRole("operator")}
@@ -708,6 +742,13 @@ function KBCOperatorCRM({ supportQueue, goals, queueItems, onResolveCustomerCall
   const handleAnswerCall = (customer) => {
     setActiveCallCustomer(customer);
     setCallDuration(1);
+    if (customer.fromWeek) {
+      setChatMessages([
+        { sender: "system", text: "Eva did not open the app. This desk already has her fortnight." },
+        { sender: "customer", text: "I don't want to open the app for this." },
+      ]);
+      return;
+    }
     setChatMessages([
       { sender: "system", text: `Call connected with ${customer.customerName} (${customer.accountNumber}).` },
       { sender: "customer", text: `Hi, I was about to buy ${customer.frictionEvent} but Kate triggered Soft Friction. Can you review my budget with me?` },
@@ -795,17 +836,17 @@ function KBCOperatorCRM({ supportQueue, goals, queueItems, onResolveCustomerCall
                     <span className="text-xs font-semibold text-rose-100">Just now</span>
                   </div>
                   <h3 className="text-lg font-bold text-white mt-0.5">
-                    Sarah Van den Berg wants to talk to a financial advisor
+                    {supportQueue.find((c) => c.status === "calling")?.customerName} wants to talk to a financial advisor
                   </h3>
                   <p className="text-xs text-sky-100">
-                    Trigger: Soft Friction Event (€80 Zara Purchase) · Account Balance: €55.30
+                    {supportQueue.find((c) => c.status === "calling")?.frictionEvent} · {supportQueue.find((c) => c.status === "calling")?.balance}
                   </p>
                 </div>
               </div>
 
               <div className="flex items-center gap-3">
                 <button
-                  onClick={() => handleAnswerCall(supportQueue[0])}
+                  onClick={() => handleAnswerCall(supportQueue.find((c) => c.status === "calling") ?? supportQueue[0])}
                   className="flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-bold text-emerald-700 shadow-lg hover:bg-emerald-50 transition transform active:scale-95"
                 >
                   <svg className="h-5 w-5 fill-emerald-600" viewBox="0 0 24 24">
@@ -829,11 +870,7 @@ function KBCOperatorCRM({ supportQueue, goals, queueItems, onResolveCustomerCall
               <div className="flex items-center justify-between border-b border-slate-100 bg-slate-900 p-4 text-white">
                 <div className="flex items-center gap-3">
                   <div className="relative">
-                    <img
-                      src={activeCallCustomer.customerAvatar}
-                      alt={activeCallCustomer.customerName}
-                      className="h-11 w-11 rounded-xl object-cover ring-2 ring-emerald-400"
-                    />
+                    <Portrait person={activeCallCustomer} className="h-11 w-11 rounded-xl ring-2 ring-emerald-400" />
                     <span className="absolute -bottom-1 -right-1 h-3.5 w-3.5 rounded-full bg-emerald-500 border-2 border-slate-900" />
                   </div>
                   <div>
@@ -898,11 +935,18 @@ function KBCOperatorCRM({ supportQueue, goals, queueItems, onResolveCustomerCall
                   Kate AI Suggested Advisor talking points:
                 </p>
                 <div className="flex flex-wrap gap-1.5">
-                  {[
-                    "Acknowledge €80 clothing pause",
-                    "Highlight €14.2k House Savings Goal",
-                    "Offer €50 temporary emergency buffer",
-                  ].map((tip, i) => (
+                  {(activeCallCustomer.fromWeek
+                    ? [
+                        "Name the tight week without blame",
+                        "Stay with the bill before payday",
+                        "Offer tomorrow 10:30 or Thursday 16:00",
+                      ]
+                    : [
+                        "Acknowledge €80 clothing pause",
+                        "Highlight €14.2k House Savings Goal",
+                        "Offer €50 temporary emergency buffer",
+                      ]
+                  ).map((tip, i) => (
                     <button
                       key={i}
                       onClick={() => setOperatorInput(tip)}
@@ -941,11 +985,7 @@ function KBCOperatorCRM({ supportQueue, goals, queueItems, onResolveCustomerCall
                 Customer 360 Profile
               </h3>
               <div className="flex items-center gap-3">
-                <img
-                  src={activeCallCustomer.customerAvatar}
-                  alt={activeCallCustomer.customerName}
-                  className="h-12 w-12 rounded-2xl object-cover border border-slate-200"
-                />
+                <Portrait person={activeCallCustomer} className="h-12 w-12 rounded-2xl" />
                 <div>
                   <h4 className="text-base font-bold text-kbc-navy">{activeCallCustomer.customerName}</h4>
                   <p className="text-xs text-kbc-muted">{activeCallCustomer.accountNumber}</p>
@@ -961,8 +1001,8 @@ function KBCOperatorCRM({ supportQueue, goals, queueItems, onResolveCustomerCall
                   <span className="font-bold text-kbc-navy text-sm">{activeCallCustomer.balance}</span>
                 </div>
                 <div className="rounded-xl bg-slate-50 p-2.5 border border-slate-100">
-                  <span className="text-slate-500 block text-[10px]">Focus Shield</span>
-                  <span className="font-bold text-emerald-600 text-sm">Active</span>
+                  <span className="text-slate-500 block text-[10px]">{activeCallCustomer.fromWeek ? "How she arrived" : "Focus Shield"}</span>
+                  <span className="font-bold text-emerald-600 text-sm">{activeCallCustomer.fromWeek ? "Before the app" : "Active"}</span>
                 </div>
               </div>
             </div>
@@ -970,17 +1010,43 @@ function KBCOperatorCRM({ supportQueue, goals, queueItems, onResolveCustomerCall
             {/* Soft Friction Data */}
             <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-sky-100 space-y-3">
               <h3 className="text-xs font-bold uppercase tracking-wider text-kbc-muted">
-                Soft Friction Event History
+                {activeCallCustomer.fromWeek ? "Why she is on the desk" : "Soft Friction Event History"}
               </h3>
               <div className="rounded-xl bg-red-50/70 p-3 border border-red-100">
                 <p className="text-xs font-bold text-red-900">{activeCallCustomer.frictionEvent}</p>
                 <p className="text-[11px] text-red-700 mt-0.5">{activeCallCustomer.frictionReason}</p>
                 <span className="mt-1 inline-block text-[10px] font-semibold text-red-600">
-                  Status: Canceled by user via Kate AI Soft Friction
+                  {activeCallCustomer.fromWeek
+                    ? "Status: Reached from the week tape. No purchase was paused."
+                    : "Status: Canceled by user via Kate AI Soft Friction"}
                 </span>
               </div>
             </div>
 
+            {activeCallCustomer.fromWeek ? (
+              <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-sky-100">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-kbc-muted mb-2">
+                  Suggested talk track
+                </h3>
+                <p className="text-sm text-kbc-navy mb-3">{activeCallCustomer.frictionReason}</p>
+                <ol className="space-y-2">
+                  {TALK_TRACK.map((item, index) => (
+                    <li key={item.step} className="flex gap-2 rounded-xl bg-sky-50 px-3 py-2 text-xs">
+                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-kbc-blue text-[10px] font-bold text-white">
+                        {index + 1}
+                      </span>
+                      <div>
+                        <p className="font-bold text-kbc-navy">{item.step}</p>
+                        <p className="text-kbc-muted">{item.line}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            ) : null}
+
+            {activeCallCustomer.fromWeek ? null : (
+            <>
             {/* Customer Goals */}
             <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-sky-100">
               <h3 className="text-xs font-bold uppercase tracking-wider text-kbc-muted mb-2">
@@ -1017,6 +1083,8 @@ function KBCOperatorCRM({ supportQueue, goals, queueItems, onResolveCustomerCall
                 </div>
               ))}
             </div>
+            </>
+            )}
           </div>
         </div>
       ) : (
@@ -1043,11 +1111,7 @@ function KBCOperatorCRM({ supportQueue, goals, queueItems, onResolveCustomerCall
                 }`}
               >
                 <div className="flex items-center gap-3.5">
-                  <img
-                    src={req.customerAvatar}
-                    alt={req.customerName}
-                    className="h-12 w-12 rounded-2xl object-cover border border-slate-200"
-                  />
+                  <Portrait person={req} className="h-12 w-12 rounded-2xl" />
                   <div>
                     <div className="flex items-center gap-2">
                       <h4 className="text-sm font-bold text-kbc-navy">{req.customerName}</h4>
@@ -1096,6 +1160,7 @@ function MainDashboard({
   onOpenAddGoal,
   onDeleteGoal,
   onRequestAdvisorCall,
+  onSeeWeek,
 }) {
   const [selectedImageModal, setSelectedImageModal] = useState(null);
 
@@ -1136,9 +1201,18 @@ function MainDashboard({
             />
           </svg>
         </div>
-        <p className="text-sm font-semibold text-amber-900 leading-snug">
-          Focus Mode Active: Helping you keep your budget on track.
-        </p>
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-semibold text-amber-900 leading-snug">
+            Focus Mode Active: Helping you keep your budget on track.
+          </p>
+          <button
+            type="button"
+            onClick={onSeeWeek}
+            className="mt-1 text-left text-xs font-semibold text-kbc-blue underline-offset-2 hover:underline"
+          >
+            Eva never opened this app. See the week the bank already had.
+          </button>
+        </div>
       </div>
 
       {/* Low Balance Account Card */}
@@ -1434,7 +1508,13 @@ function ProcessingView({ onReset }) {
 }
 
 export default function App() {
-  const [activeRole, setActiveRole] = useState("customer"); // "customer" | "operator"
+  const [activeRole, setActiveRole] = useState("customer"); // "customer" | "week" | "operator"
+  const [weekCustomer, setWeekCustomer] = useState("eva");
+  const [weekDay, setWeekDay] = useState(0);
+  const [weekPlaying, setWeekPlaying] = useState(false);
+  const [weekSlot, setWeekSlot] = useState(null);
+  const weekScore = useWeekScore(weekCustomer, weekDay);
+  const evaOnDesk = weekCustomer === "eva" && (weekScore.level === "stress" || weekSlot !== null);
   const [modalOpen, setModalOpen] = useState(false);
   const [addGoalModalOpen, setAddGoalModalOpen] = useState(false);
   const [view, setView] = useState("dashboard"); // "dashboard" | "processing"
@@ -1500,9 +1580,15 @@ export default function App() {
   };
 
   const handleResolveCustomerCall = (reqId) => {
+    if (reqId === "REQ-EVA") {
+      setToastMessage("Eva’s week stays on the tape. Nothing was dialled.");
+      return;
+    }
     setSupportQueue((prev) => prev.filter((r) => r.id !== reqId));
     setToastMessage("Customer call ended and session logged in KBC CRM.");
   };
+
+  const deskQueue = evaOnDesk ? [evaDeskRequest(weekSlot), ...supportQueue] : supportQueue;
 
   return (
     <div className="min-h-screen bg-sky-50/60 font-sans text-slate-900">
@@ -1510,8 +1596,11 @@ export default function App() {
       <GlobalRoleBar
         activeRole={activeRole}
         onChangeRole={setActiveRole}
-        incomingCallCount={supportQueue.filter((c) => c.status === "calling").length}
+        incomingCallCount={deskQueue.filter((c) => c.status === "calling").length}
       />
+      <p className="border-b border-sky-100 bg-white/70 px-4 py-2 text-center text-xs leading-relaxed text-kbc-navy">
+        Two moments. In the app, Focus Shield pauses a purchase. Eva’s week is the fortnight the bank already had, before she looked.
+      </p>
 
       {activeRole === "customer" ? (
         view === "dashboard" ? (
@@ -1524,14 +1613,27 @@ export default function App() {
             onOpenAddGoal={() => setAddGoalModalOpen(true)}
             onDeleteGoal={handleDeleteGoal}
             onRequestAdvisorCall={handleRequestAdvisorCall}
+            onSeeWeek={() => setActiveRole("week")}
           />
         ) : (
           <ProcessingView onReset={() => setView("dashboard")} />
         )
+      ) : activeRole === "week" ? (
+        <WeekView
+          customerId={weekCustomer}
+          onCustomer={setWeekCustomer}
+          day={weekDay}
+          onDay={setWeekDay}
+          playing={weekPlaying}
+          onPlaying={setWeekPlaying}
+          slot={weekSlot}
+          onSlot={setWeekSlot}
+          onOpenDesk={() => setActiveRole("operator")}
+        />
       ) : (
         /* Operator CRM Workspace */
         <KBCOperatorCRM
-          supportQueue={supportQueue}
+          supportQueue={deskQueue}
           goals={goals}
           queueItems={queueItems}
           onResolveCustomerCall={handleResolveCustomerCall}

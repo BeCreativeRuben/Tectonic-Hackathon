@@ -1,0 +1,191 @@
+[
+  {
+    "customerId": "eva",
+    "type": "discretionary_cut",
+    "timestamp": "2026-03-08T18:20:00.000Z",
+    "severity": 1,
+    "value": -35,
+    "meta": { "unit": "EUR", "category": "takeaway" },
+    "note": "Takeaway and coffee spend down versus her usual week."
+  },
+  {
+    "customerId": "eva",
+    "type": "balance_trend_down",
+    "timestamp": "2026-03-09T06:00:00.000Z",
+    "severity": 1,
+    "value": -140,
+    "meta": { "unit": "EUR", "window_days": 7 },
+    "note": "Current account about €140 lower than a week ago."
+  },
+  {
+    "customerId": "eva",
+    "type": "essential_spend_up",
+    "timestamp": "2026-03-11T12:10:00.000Z",
+    "severity": 2,
+    "value": 220,
+    "meta": { "unit": "EUR", "category": "groceries_and_energy" },
+    "note": "Groceries and the energy advance are both above her recent month."
+  },
+  {
+    "customerId": "eva",
+    "type": "payday_gap",
+    "timestamp": "2026-03-12T07:15:00.000Z",
+    "severity": 2,
+    "value": 6,
+    "meta": { "unit": "days_until_salary", "bill": "rent" },
+    "note": "Salary expected in 6 days; rent is already scheduled."
+  },
+  {
+    "customerId": "eva",
+    "type": "balance_trend_down",
+    "timestamp": "2026-03-13T06:00:00.000Z",
+    "severity": 2,
+    "value": -380,
+    "meta": { "unit": "EUR", "window_days": 7 },
+    "note": "Balance down €380 over seven days after rent left the account."
+  },
+  {
+    "customerId": "eva",
+    "type": "near_zero_balance",
+    "timestamp": "2026-03-16T21:05:00.000Z",
+    "severity": 3,
+    "value": 42,
+    "meta": { "unit": "EUR", "balance": 42 },
+    "note": "Available balance €42 the evening before a direct debit."
+  },
+  {
+    "customerId": "eva",
+    "type": "overdraft_dip",
+    "timestamp": "2026-03-17T09:40:00.000Z",
+    "severity": 2,
+    "value": -60,
+    "meta": { "unit": "EUR", "overdraft": -60 },
+    "note": "Childcare direct debit took the account €60 below zero."
+  },
+  {
+    "customerId": "eva",
+    "type": "late_or_missed_payment_flag",
+    "timestamp": "2026-03-18T11:00:00.000Z",
+    "severity": 2,
+    "value": 1,
+    "meta": { "unit": "count", "creditor": "energy" },
+    "note": "Energy payment missed its due date by one day."
+  },
+  {
+    "customerId": "tom",
+    "type": "discretionary_cut",
+    "timestamp": "2026-03-10T19:00:00.000Z",
+    "severity": 1,
+    "value": -40,
+    "meta": { "unit": "EUR", "category": "restaurants" },
+    "note": "Fewer restaurant payments than his usual month."
+  },
+  {
+    "customerId": "tom",
+    "type": "balance_trend_down",
+    "timestamp": "2026-03-18T06:00:00.000Z",
+    "severity": 1,
+    "value": -90,
+    "meta": { "unit": "EUR", "window_days": 14 },
+    "note": "Small drift lower, still a comfortable buffer above bills."
+  },
+  {
+    "customerId": "lina",
+    "type": "essential_spend_up",
+    "timestamp": "2026-03-09T16:30:00.000Z",
+    "severity": 2,
+    "value": 180,
+    "meta": { "unit": "EUR", "category": "groceries_and_energy" },
+    "note": "Shared grocery shop and energy top-up landed in the same week."
+  },
+  {
+    "customerId": "lina",
+    "type": "payday_gap",
+    "timestamp": "2026-03-14T08:00:00.000Z",
+    "severity": 2,
+    "value": 8,
+    "meta": { "unit": "days_until_salary", "bill": "rent" },
+    "note": "Rent goes out eight days before her salary."
+  },
+  {
+    "customerId": "lina",
+    "type": "balance_trend_down",
+    "timestamp": "2026-03-16T06:00:00.000Z",
+    "severity": 1,
+    "value": -210,
+    "meta": { "unit": "EUR", "window_days": 10 },
+    "note": "Balance easing down, not yet near zero."
+  },
+  {
+    "customerId": "marc",
+    "type": "balance_trend_down",
+    "timestamp": "2026-03-08T06:00:00.000Z",
+    "severity": 2,
+    "value": -640,
+    "meta": { "unit": "EUR", "window_days": 14 },
+    "note": "Balance lower after the mortgage and a car repair."
+  },
+  {
+    "customerId": "marc",
+    "type": "essential_spend_up",
+    "timestamp": "2026-03-11T13:20:00.000Z",
+    "severity": 2,
+    "value": 260,
+    "meta": { "unit": "EUR", "category": "utilities_and_health" },
+    "note": "Utilities plus a pharmacy bill above the recent pattern."
+  },
+  {
+    "customerId": "marc",
+    "type": "near_zero_balance",
+    "timestamp": "2026-03-15T20:10:00.000Z",
+    "severity": 3,
+    "value": 18,
+    "meta": { "unit": "EUR", "balance": 18 },
+    "note": "Available balance €18 with another debit still scheduled."
+  },
+  {
+    "customerId": "marc",
+    "type": "overdraft_dip",
+    "timestamp": "2026-03-17T07:50:00.000Z",
+    "severity": 2,
+    "value": -85,
+    "meta": { "unit": "EUR", "overdraft": -85 },
+    "note": "Account €85 into the authorised overdraft overnight."
+  },
+  {
+    "customerId": "marc",
+    "type": "late_or_missed_payment_flag",
+    "timestamp": "2026-03-19T10:30:00.000Z",
+    "severity": 2,
+    "value": 1,
+    "meta": { "unit": "count", "creditor": "energy" },
+    "note": "Energy invoice still open past the due date."
+  },
+  {
+    "customerId": "noor",
+    "type": "essential_spend_up",
+    "timestamp": "2026-03-12T15:45:00.000Z",
+    "severity": 1,
+    "value": 40,
+    "meta": { "unit": "EUR", "category": "school" },
+    "note": "School supplies a little above the usual week."
+  },
+  {
+    "customerId": "noor",
+    "type": "discretionary_cut",
+    "timestamp": "2026-03-13T18:05:00.000Z",
+    "severity": 2,
+    "value": -70,
+    "meta": { "unit": "EUR", "category": "streaming_and_eating_out" },
+    "note": "Streaming and eating-out paused for the month."
+  },
+  {
+    "customerId": "noor",
+    "type": "balance_trend_down",
+    "timestamp": "2026-03-19T06:00:00.000Z",
+    "severity": 1,
+    "value": -60,
+    "meta": { "unit": "EUR", "window_days": 7 },
+    "note": "Mild dip, with salary still covering the family bills."
+  }
+]

@@ -1,0 +1,37 @@
+[
+  {
+    "id": "eva",
+    "name": "Eva Janssens",
+    "ageBand": "30-39",
+    "household": "Couple with one child",
+    "city": "Antwerp"
+  },
+  {
+    "id": "tom",
+    "name": "Tom Peeters",
+    "ageBand": "40-49",
+    "household": "Single, renting",
+    "city": "Ghent"
+  },
+  {
+    "id": "lina",
+    "name": "Lina Dubois",
+    "ageBand": "25-34",
+    "household": "Shared flat with a partner",
+    "city": "Brussels"
+  },
+  {
+    "id": "marc",
+    "name": "Marc Vermeulen",
+    "ageBand": "55-64",
+    "household": "Couple, mortgage, adult children away",
+    "city": "Leuven"
+  },
+  {
+    "id": "noor",
+    "name": "Noor El Amrani",
+    "ageBand": "35-44",
+    "household": "Family with two children",
+    "city": "Liège"
+  }
+]
